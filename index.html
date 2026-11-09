@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Habit Matrix 2026</title>
+<style>
+:root{--bg:#f6f7f4;--card:#fff;--ink:#1c2420;--mut:#6b7670;--line:#e2e6e0;--acc:#2f7d5b;--g:#cfeadb;--a:#fbe6b8;--r:#f6cfcb;--gt:#17553a;--at:#7a5200;--rt:#8a2a22;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121815;--card:#1b231f;--ink:#e8eee9;--mut:#9aa7a0;--line:#2b3631;--acc:#5fc79a;--g:#1f4a37;--a:#4d3d12;--r:#552522;--gt:#a6e8c9;--at:#f5d27a;--rt:#f5b5ae;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121815;--card:#1b231f;--ink:#e8eee9;--mut:#9aa7a0;--line:#2b3631;--acc:#5fc79a;--g:#1f4a37;--a:#4d3d12;--r:#552522;--gt:#a6e8c9;--at:#f5d27a;--rt:#f5b5ae;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:20px 16px 8px;max-width:1100px;margin:auto}
+h1{font-size:22px;margin:0}header p{margin:2px 0 0;color:var(--mut);font-size:13px}
+nav{display:flex;gap:6px;padding:8px 16px;max-width:1100px;margin:auto;overflow-x:auto}
+nav button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;cursor:pointer;white-space:nowrap}
+nav button.on,.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+main{max-width:1100px;margin:auto;padding:8px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.kpi small{color:var(--mut);font-size:11px;letter-spacing:.05em}.kpi b{display:block;font-size:26px}
+h2{font-size:14px;margin:0 0 10px;letter-spacing:.04em;color:var(--mut)}
+.row{display:grid;grid-template-columns:130px 1fr 52px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{padding:4px 5px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mut);font-weight:600;font-size:11px}
+td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+.c{width:30px;height:28px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--mut);cursor:pointer;font:inherit}
+.c.v1{background:var(--g);color:var(--gt);border-color:transparent;font-weight:700}
+.c.v0{background:var(--r);color:var(--rt);border-color:transparent;font-weight:700}
+.wk{background:color-mix(in srgb,var(--line) 35%,transparent)}
+.hm{border-radius:6px;padding:6px 2px;min-width:44px}.hg{background:var(--g);color:var(--gt)}.ha{background:var(--a);color:var(--at)}.hr{background:var(--r);color:var(--rt)}.hn{color:var(--mut)}
+input[type=text],input[type=number]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px;width:100%}
+input.note{min-width:140px}
+.bar2{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}.bar2 b{min-width:130px;text-align:center}
+.muted{color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header><h1>Habit Matrix 2026</h1><p>Small actions, honestly tracked. Progress, not perfect streaks.</p></header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<script>
+const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DEF=[["Deep Work","Focus",5],["Study / Learning","Learning",6],["Coding Practice","Learning",5],["Workout","Fitness",4],["Reading","Growth",4],["Project Work","Career",4],["Hydration","Wellbeing",7],["Consistent Sleep","Wellbeing",6],["Daily Review","Planning",6],["Walk / Mobility","Fitness",5],["Journaling","Growth",3],["Skill Practice","Learning",4]].map(([n,c,t])=>({n,c,t,a:true}));
+const KEY="habit-matrix-2026-v1";
+let S=null;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.h)S={y:2026,h:DEF,log:{},notes:{}};
+let view="dash",month=(new Date().getFullYear()===S.y)?new Date().getMonth():0,resetArm=false;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const dim=m=>new Date(S.y,m+1,0).getDate();
+const key=(m,d)=>S.y+"-"+(m+1)+"-"+d;
+const act=()=>S.h.map((h,i)=>h.a?i:-1).filter(i=>i>=0);
+const pct=x=>x==null?"—":Math.round(x*100)+"%";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function stat(m,i){let d=0,l=0;for(let day=1;day<=dim(m);day++){const v=(S.log[key(m,day)]||[])[i];if(v===1){d++;l++}else if(v===0)l++}return{d,l}}
+function mstat(m,idx){let d=0,l=0;(idx||act()).forEach(i=>{const s=stat(m,i);d+=s.d;l+=s.l});return{d,l,r:l?d/l:null}}
+function hstat(i){let d=0,l=0;for(let m=0;m<12;m++){const s=stat(m,i);d+=s.d;l+=s.l}return{d,l,r:l?d/l:null}}
+const cls=r=>r==null?"hn":r>=.8?"hg":r>=.5?"ha":"hr";
+const bar=(r,w)=>`<div class="bar"><i style="width:${Math.round((r||0)*100)}%"></i></div>`;
+
+function dash(){
+  const t=mstat(0).d,tot=[...Array(12).keys()].reduce((a,m)=>{const s=mstat(m);return{d:a.d+s.d,l:a.l+s.l}},{d:0,l:0});
+  let h=`<div class="kpis"><div class="kpi"><small>OVERALL COMPLETION</small><b>${pct(tot.l?tot.d/tot.l:null)}</b></div><div class="kpi"><small>ACTIVE HABITS</small><b>${act().length}</b></div><div class="kpi"><small>COMPLETED CHECK-INS</small><b>${tot.d}</b></div><div class="kpi"><small>LOGGED CHECK-INS</small><b>${tot.l}</b></div></div><div class="two"><div class="card"><h2>MONTHLY PROGRESS</h2>`;
+  for(let m=0;m<12;m++){const s=mstat(m);h+=`<div class="row"><span>${MN[m]}</span>${bar(s.r)}<span>${pct(s.r)}</span></div>`}
+  h+=`</div><div class="card"><h2>HABIT PERFORMANCE · YEAR TO DATE</h2>`;
+  act().forEach(i=>{const s=hstat(i);h+=`<div class="row"><span>${esc(S.h[i].n)}</span>${bar(s.r)}<span>${pct(s.r)}</span></div>`});
+  return h+`</div></div>`;
+}
+function monthView(){
+  const idx=act(),n=dim(month),ms=mstat(month);
+  let h=`<div class="bar2"><button class="btn" data-a="pm">←</button><b>${MN[month]} ${S.y}</b><button class="btn" data-a="nm">→</button><span class="muted">Tap a cell: ✓ done → × missed → blank. Month ${pct(ms.r)} · done ${ms.d} · logged ${ms.l}</span></div><div class="card scroll"><table><tr><th>Date</th>${idx.map(i=>`<th>${esc(S.h[i].n)}</th>`).join("")}<th>Done</th><th>Daily %</th><th>Notes</th></tr>`;
+  for(let d=1;d<=n;d++){
+    const dt=new Date(S.y,month,d),wk=dt.getDay()%6===0,k=key(month,d),row=S.log[k]||[];
+    let dn=0,lg=0;
+    const cells=idx.map(i=>{const v=row[i];if(v===1){dn++;lg++}else if(v===0)lg++;return`<td><button class="c ${v===1?"v1":v===0?"v0":""}" data-a="c" data-d="${d}" data-i="${i}">${v===1?"✓":v===0?"×":"·"}</button></td>`}).join("");
+    h+=`<tr class="${wk?"wk":""}"><td>${dt.toLocaleDateString("en",{weekday:"short"})} ${d}</td>${cells}<td>${dn}</td><td>${lg?Math.round(dn/lg*100)+"%":"—"}</td><td><input class="note" type="text" data-k="${k}" value="${esc(S.notes[k]||"")}" placeholder="Note"></td></tr>`;
+  }
+  h+=`</table></div><div class="card scroll"><h2>MONTHLY HABIT SCORECARD</h2><table><tr><th>Habit</th><th>Category</th><th>Done</th><th>Logged</th><th>Rate</th><th>Target / wk</th><th>Month target</th><th>Goal progress</th></tr>`;
+  idx.forEach(i=>{const s=stat(month,i),H=S.h[i],mt=H.t*n/7;h+=`<tr><td>${esc(H.n)}</td><td>${esc(H.c)}</td><td>${s.d}</td><td>${s.l}</td><td>${pct(s.l?s.d/s.l:null)}</td><td>${H.t}</td><td>${mt.toFixed(1)}</td><td><div class="hm ${cls(mt?Math.min(s.d/mt,1):null)}">${pct(mt?s.d/mt:null)}</div></td></tr>`});
+  return h+`</table></div>`;
+}
+function year(){
+  const idx=act();
+  let h=`<div class="card scroll"><h2>ANNUAL HABIT MATRIX · green = stronger · amber = building · red = needs attention</h2><table><tr><th>Month</th>${idx.map(i=>`<th>${esc(S.h[i].n)}</th>`).join("")}<th>Monthly %</th></tr>`;
+  for(let m=0;m<12;m++){const ms=mstat(m);h+=`<tr><td>${MN[m]}</td>${idx.map(i=>{const s=stat(m,i),r=s.l?s.d/s.l:null;return`<td><div class="hm ${cls(r)}">${pct(r)}</div></td>`}).join("")}<td><div class="hm ${cls(ms.r)}"><b>${pct(ms.r)}</b></div></td></tr>`}
+  return h+`</table></div>`;
+}
+function setup(){
+  let h=`<div class="card scroll"><h2>HABITS · edit names, categories and weekly targets; untick to deactivate</h2><table><tr><th>Habit</th><th>Category</th><th>Target / wk</th><th>Active</th></tr>`;
+  S.h.forEach((x,i)=>{h+=`<tr><td><input type="text" data-h="${i}" data-f="n" value="${esc(x.n)}"></td><td><input type="text" data-h="${i}" data-f="c" value="${esc(x.c)}"></td><td><input type="number" min="1" max="7" data-h="${i}" data-f="t" value="${x.t}"></td><td><input type="checkbox" data-h="${i}" data-f="a" ${x.a?"checked":""}></td></tr>`});
+  h+=`</table></div><div class="card"><h2>TRACKING YEAR</h2><input type="number" id="yr" value="${S.y}" style="max-width:120px"> <span class="muted">Changing the year switches the calendar; logs are stored per date.</span></div>
+  <div class="card"><button class="btn" data-a="reset">${resetArm?"Tap again to erase all logs":"Reset all logged data"}</button> <span class="muted">Data is saved in this browser on this device.</span></div>`;
+  return h;
+}
+function render(){
+  const tabs=[["dash","Dashboard"],["month","Month"],["year","Year View"],["setup","Setup"]];
+  document.getElementById("nav").innerHTML=tabs.map(([k,l])=>`<button class="${view===k?"on":""}" data-a="v" data-v="${k}">${l}</button>`).join("");
+  document.getElementById("app").innerHTML={dash,month:monthView,year,setup}[view]();
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a;
+  if(a==="v"){view=b.dataset.v;resetArm=false}
+  else if(a==="pm")month=(month+11)%12;
+  else if(a==="nm")month=(month+1)%12;
+  else if(a==="c"){const k=key(month,+b.dataset.d),i=+b.dataset.i;const r=S.log[k]||(S.log[k]=Array(12).fill(null));r[i]=r[i]===null||r[i]===undefined?1:r[i]===1?0:null;save()}
+  else if(a==="reset"){if(resetArm){S.log={};S.notes={};save();resetArm=false}else{resetArm=true}}
+  render();
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.k!==undefined){S.notes[t.dataset.k]=t.value;save();return}
+  if(t.dataset.h!==undefined){const H=S.h[+t.dataset.h],f=t.dataset.f;H[f]=f==="a"?t.checked:f==="t"?Math.max(1,Math.min(7,+t.value||1)):t.value;save();if(f==="a"||f==="t")render();return}
+  if(t.id==="yr"){S.y=+t.value||2026;save();render()}
+});
+render();
+</script>
+</body>
+</html>
